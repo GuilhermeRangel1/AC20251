@@ -1,6 +1,7 @@
 package br.edu.cs.poo.ac.seguro.mediators;
 
 import br.edu.cs.poo.ac.seguro.daos.SeguradoPessoaDAO;
+import br.edu.cs.poo.ac.seguro.entidades.Endereco;
 import br.edu.cs.poo.ac.seguro.entidades.SeguradoPessoa;
 
 
@@ -33,6 +34,7 @@ public class SeguradoPessoaMediator {
 		}
 		return null;
 	}
+
 	public String incluirSeguradoPessoa(SeguradoPessoa seg) {
 		String msg = validarSeguradoPessoa(seg);
 		if(msg!=null) {
@@ -45,16 +47,17 @@ public class SeguradoPessoaMediator {
 		return null;
 	}
 	public String alterarSeguradoPessoa(SeguradoPessoa seg) {
-		if(seguradoPessoaDAO.buscar(seg.getCpf()) == null) {
-			return "CPF do segurado pessoa não encontrado";
-		}
-		String msg = validarSeguradoPessoa(seg);
-	    if(msg != null) {
-	        return msg;
+	    String msg = validarSeguradoPessoa(seg);
+	    if (msg != null) {
+	        return msg;              
+	    }
+	    if (seguradoPessoaDAO.buscar(seg.getCpf()) == null) {
+	        return "CPF do segurado pessoa não existente";
 	    }
 	    seguradoPessoaDAO.alterar(seg);
 	    return null;
 	}
+
 	public String excluirSeguradoPessoa(String cpf) {
 		if(seguradoPessoaDAO.buscar(cpf) == null)  return "CPF do segurado pessoa não existente";
 		seguradoPessoaDAO.excluir(cpf);
@@ -70,7 +73,7 @@ public class SeguradoPessoaMediator {
 	    
 	    if(msg != null) return msg;
 
-	    msg = seguradoMediator.validarEndereco(seg.getEndereco());
+	    msg = validarEndereco(seg.getEndereco());
 	    
 	    if(msg != null) return msg;
 	    
@@ -80,7 +83,7 @@ public class SeguradoPessoaMediator {
 	    
 	    msg = seguradoMediator.validarDataCriacao(seg.getDataNascimento());
 	    
-	    if(msg != null) return msg;
+	    if(msg != null) return "Data do nascimento deve ser informada";
 	    
 	    msg = validarRenda(seg.getRenda());
 	    
@@ -88,4 +91,30 @@ public class SeguradoPessoaMediator {
 	    
 	    return null;  
 	}
+	public String validarEndereco(Endereco endereco) {
+	    if (endereco == null) {
+	        return "Endereço deve ser informado";
+	    }
+	    if (StringUtils.ehNuloOuBranco(endereco.getLogradouro())) {
+	        return "Logradouro deve ser informado";
+	    }
+	    if (StringUtils.ehNuloOuBranco(endereco.getNumero())) {
+	        return "Número do endereço deve ser informado";
+	    }
+	    if (StringUtils.ehNuloOuBranco(endereco.getCep())) {
+	        return "CEP deve ser informado";
+	    }
+	    if (StringUtils.ehNuloOuBranco(endereco.getPais())) {
+	        return "País deve ser informado";
+	    }
+	    if (StringUtils.ehNuloOuBranco(endereco.getEstado())) {
+	        return "Estado deve ser informado";
+	    }
+	    if (StringUtils.ehNuloOuBranco(endereco.getCidade())) {
+	        return "Cidade deve ser informada";
+	    }
+	    return null;
+	}
+
+
 }

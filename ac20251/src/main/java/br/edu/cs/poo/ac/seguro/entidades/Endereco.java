@@ -1,6 +1,6 @@
 package br.edu.cs.poo.ac.seguro.entidades;
-
-public class Endereco {
+import java.io.Serializable;
+public class Endereco implements Serializable {
 	public String getLogradouro() {
 		return logradouro;
 	}
@@ -54,6 +54,7 @@ public class Endereco {
 		this.estado = estado;
 		this.cidade = cidade;
 	}
+    private static final long serialVersionUID = 1L;
 	private String logradouro;
     private String cep;
     private String numero;

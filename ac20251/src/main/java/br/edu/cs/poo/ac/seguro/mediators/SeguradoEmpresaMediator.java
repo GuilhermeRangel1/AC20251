@@ -2,6 +2,7 @@ package br.edu.cs.poo.ac.seguro.mediators;
 
 import br.edu.cs.poo.ac.seguro.daos.SeguradoEmpresaDAO;
 import br.edu.cs.poo.ac.seguro.entidades.SeguradoEmpresa;
+import br.edu.cs.poo.ac.seguro.entidades.SeguradoPessoa;
 
 public class SeguradoEmpresaMediator {
 	private SeguradoEmpresaDAO seguradoEmpresaDAO = new SeguradoEmpresaDAO();
@@ -28,8 +29,8 @@ public class SeguradoEmpresaMediator {
 	}
 
 	public String validarFaturamento(double faturamento) {
-		if (faturamento < 0.0) {
-			return "Faturamento deve ser maior ou igual à zero";
+		if (faturamento <= 0.0) {
+			return "Faturamento deve ser maior que zero";
 		}
 		return null;
 	}
@@ -46,17 +47,19 @@ public class SeguradoEmpresaMediator {
 		return null;
 	}
 
+
 	public String alterarSeguradoEmpresa(SeguradoEmpresa seg) {
-		if (seguradoEmpresaDAO.buscar(seg.getCnpj()) == null) {
-			return "CNPJ do segurado empresa não encontrado";
-		}
-		String msg = validarSeguradoEmpresa(seg);
-		if (msg != null) {
-			return msg;
-		}
-		seguradoEmpresaDAO.alterar(seg);
-		return null;
+	    String msg = validarSeguradoEmpresa(seg);
+	    if (msg != null) {
+	        return msg; 
+	    }
+	    if (seguradoEmpresaDAO.buscar(seg.getCnpj()) == null) {
+	        return "CNPJ do segurado empresa não existente";
+	    }
+	    seguradoEmpresaDAO.alterar(seg);
+	    return null;
 	}
+
 
 	public String excluirSeguradoEmpresa(String cnpj) {
 		if (seguradoEmpresaDAO.buscar(cnpj) == null) {
@@ -83,7 +86,7 @@ public class SeguradoEmpresaMediator {
 		if (msg != null) return msg;
 
 		msg = seguradoMediator.validarDataCriacao(seg.getDataAbertura());
-		if (msg != null) return msg;
+		if (msg != null) return "Data da abertura deve ser informada";
 
 		msg = validarFaturamento(seg.getFaturamento());
 		if (msg != null) return msg;

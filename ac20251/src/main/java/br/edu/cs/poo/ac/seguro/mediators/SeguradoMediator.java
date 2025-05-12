@@ -35,13 +35,15 @@ public class SeguradoMediator {
         if (validacaoCep != null) return validacaoCep;
 
         String validacaoCidade = validarCampoObrigatorio(endereco.getCidade(), "Cidade");
-        if (validacaoCidade != null) return validacaoCidade;
+        if (validacaoCidade != null) return "Cidade deve ser informada";
+        if(endereco.getCidade().length()>100 == true) return "Tamanho da cidade deve ser no máximo 100 caracteres";
 
         String validacaoEstado = validarSiglaEstado(endereco.getEstado());
         if (validacaoEstado != null) return validacaoEstado;
 
         String validacaoPais = validarCampoObrigatorio(endereco.getPais(), "País");
         if (validacaoPais != null) return validacaoPais;
+        if(endereco.getPais().length()>40 == true) return "Tamanho do país deve ser no máximo 40 caracteres";
 
         if (endereco.getNumero() != null && endereco.getNumero().length() > 20) {
             return "Tamanho do número deve ser no máximo 20 caracteres";
@@ -95,15 +97,13 @@ public class SeguradoMediator {
 
     public BigDecimal ajustarDebitoBonus(BigDecimal bonus, BigDecimal valorDebito) {
         if (bonus == null || valorDebito == null) {
+            return BigDecimal.ZERO;
+        }
+        if (bonus.compareTo(valorDebito) <= 0) {
+            return bonus;
+        } else {
             return valorDebito;
         }
-
-        BigDecimal novoDebito = valorDebito.subtract(bonus);
-
-        if (novoDebito.compareTo(BigDecimal.ZERO) < 0) {
-            return BigDecimal.ZERO;
-        } else {
-            return novoDebito;
-        }
     }
+
 }
