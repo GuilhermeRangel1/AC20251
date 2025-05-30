@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
-import br.edu.cs.poo.ac.seguro.mediators.ValidadorCpfCnpj;
+
 import br.edu.cs.poo.ac.seguro.entidades.Endereco;
 import br.edu.cs.poo.ac.seguro.entidades.SeguradoEmpresa;
 import br.edu.cs.poo.ac.seguro.entidades.SeguradoPessoa;
@@ -38,7 +38,7 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 	@Test
 	public void test03() {		
 		String ret = med.validarCpf("07255431081");
-		assertEquals("CPF com d√≠gito inv√°lido", ret);
+		assertEquals("CPF com dÌgito inv·lido", ret);
 	}
 	@Test
 	public void test04() {		
@@ -47,7 +47,7 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 	}
 	@Test
 	public void test05() {		
-		String msg = "Renda deve ser maior ou igual √† zero";
+		String msg = "Renda deve ser maior ou igual ‡ zero";
 		String ret = med.validarRenda(-10.0);
 		assertEquals(msg, ret);
 	}
@@ -93,7 +93,7 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 		seg = new SeguradoPessoa("PAULA", null, LocalDate.now(),
 				BigDecimal.ZERO, "07255431089", 1000.0);
 		ret = med.incluirSeguradoPessoa(seg);
-		assertEquals("Endere√ßo deve ser informado", ret);
+		assertEquals("EndereÁo deve ser informado", ret);
 		seg = new SeguradoPessoa("PAULA", end, null,
 				BigDecimal.ZERO, "07255431089", 1000.0);
 		ret = med.incluirSeguradoPessoa(seg);
@@ -101,11 +101,11 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 		seg = new SeguradoPessoa("PAULA", end, LocalDate.now(),
 				BigDecimal.ZERO, "07255431081", 1000.0);
 		ret = med.incluirSeguradoPessoa(seg);
-		assertEquals("CPF com d√≠gito inv√°lido", ret);
+		assertEquals("CPF com dÌgito inv·lido", ret);
 		seg = new SeguradoPessoa("PAULA", end, LocalDate.now(),
 				BigDecimal.ZERO, "07255431089", -12.0);
 		ret = med.incluirSeguradoPessoa(seg);
-		assertEquals("Renda deve ser maior ou igual √† zero", ret);
+		assertEquals("Renda deve ser maior ou igual ‡ zero", ret);
 	}
 	@Test
 	public void test10() {
@@ -128,7 +128,7 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 				BigDecimal.ZERO, cpf, 1000.0);
 		cadastro.incluir(seg, cpf);
 		String ret = med.incluirSeguradoPessoa(seg);
-		assertEquals("CPF do segurado pessoa j√° existente", ret);
+		assertEquals("CPF do segurado pessoa j· existente", ret);
 		SeguradoPessoa segBuscado = med.buscarSeguradoPessoa(cpf);
 		assertTrue(ComparadoraObjetosSerial.compareObjectsSerial(seg, segBuscado));
 		assertNotNull(segBuscado);
@@ -146,7 +146,7 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 		seg = new SeguradoPessoa("PAULA", null, LocalDate.now(),
 				BigDecimal.ZERO, "07255431089", 1000.0);
 		ret = med.alterarSeguradoPessoa(seg);
-		assertEquals("Endere√ßo deve ser informado", ret);
+		assertEquals("EndereÁo deve ser informado", ret);
 		seg = new SeguradoPessoa("PAULA", end, null,
 				BigDecimal.ZERO, "07255431089", 1000.0);
 		ret = med.alterarSeguradoPessoa(seg);
@@ -154,11 +154,11 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 		seg = new SeguradoPessoa("PAULA", end, LocalDate.now(),
 				BigDecimal.ZERO, "07255431081", 1000.0);
 		ret = med.alterarSeguradoPessoa(seg);
-		assertEquals("CPF com d√≠gito inv√°lido", ret);
+		assertEquals("CPF com dÌgito inv·lido", ret);
 		seg = new SeguradoPessoa("PAULA", end, LocalDate.now(),
 				BigDecimal.ZERO, "07255431089", -12.0);
 		ret = med.alterarSeguradoPessoa(seg);
-		assertEquals("Renda deve ser maior ou igual √† zero", ret);
+		assertEquals("Renda deve ser maior ou igual ‡ zero", ret);
 	}
 	@Test
 	public void test13() {
@@ -192,7 +192,7 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 		seg = new SeguradoPessoa("PAULA 1", end, LocalDate.now(),
 				BigDecimal.ONE, cpf, 2000.0);
 		String ret = med.alterarSeguradoPessoa(seg);
-		assertEquals("CPF do segurado pessoa n√£o existente", ret);
+		assertEquals("CPF do segurado pessoa n„o existente", ret);
 	}
 	@Test
 	public void test15() {
@@ -217,7 +217,7 @@ public class TesteSeguradoPessoaMediator extends TesteMediator {
 				BigDecimal.ZERO, cpfOri, 1000.0);
 		cadastro.incluir(seg, cpfOri);
 		String ret = med.excluirSeguradoPessoa(cpf);
-		assertEquals("CPF do segurado pessoa n√£o existente", ret);
+		assertEquals("CPF do segurado pessoa n„o existente", ret);
 		SeguradoPessoa segBuscado = med.buscarSeguradoPessoa(cpfOri);
 		assertNotNull(segBuscado);		
 	}

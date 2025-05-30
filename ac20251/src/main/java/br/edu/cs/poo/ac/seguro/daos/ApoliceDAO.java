@@ -1,52 +1,48 @@
 package br.edu.cs.poo.ac.seguro.daos;
 
-import br.edu.cesarschool.next.oo.persistenciaobjetos.CadastroObjetos;
 import br.edu.cs.poo.ac.seguro.entidades.Apolice;
-
-import java.util.ArrayList;
-import java.util.List;
+import br.edu.cs.poo.ac.seguro.entidades.Registro; 
 import java.util.Optional;
+import java.util.List; 
+import java.util.ArrayList; 
+import java.util.Arrays; 
+import java.util.stream.Collectors; 
 
-public class ApoliceDAO {
-    private final List<Apolice> apolices = new ArrayList<>();
-    protected final CadastroObjetos cadastro;
+public class ApoliceDAO extends DAOGenerico<Apolice> {
 
-    public ApoliceDAO() {
-        this.cadastro = new CadastroObjetos(Apolice.class);
+    @Override
+    public Class<?> getClasseEntidade() {
+        return Apolice.class;
     }
 
     public Optional<Apolice> findByNumero(String numero) {
-        Optional<Apolice> apoliceLocal = apolices.stream()
-                .filter(a -> a.getNumero().equalsIgnoreCase(numero))
-                .findFirst();
-
-        if (apoliceLocal.isPresent()) {
-            return apoliceLocal;
-        }
-
-        Apolice apoliceCadastro = (Apolice) cadastro.buscar(numero);
-        if (apoliceCadastro != null) {
-            apolices.add(apoliceCadastro); 
-            return Optional.of(apoliceCadastro);
-        }
-
-        return Optional.empty();
+        Apolice apolice = super.buscar(numero);
+        return Optional.ofNullable(apolice);
     }
 
-    public Apolice buscar(String numero) {
-        return findByNumero(numero).orElse(null);
-    }
-
-    public void insert(Apolice apolice) {
-        apolices.add(apolice);
-        cadastro.incluir(apolice, apolice.getNumero());
-    }
-
-    public boolean incluir(Apolice segurado) {
-        if (findByNumero(segurado.getNumero()).isPresent()) {
+    public boolean incluirApolice(Apolice apolice) {
+        if (findByNumero(apolice.getNumero()).isPresent()) {
             return false;
         } else {
-            insert(segurado);
+            super.incluir(apolice);
+            return true;
+        }
+    }
+
+    public boolean alterarApolice(Apolice apolice) {
+        if (findByNumero(apolice.getNumero()).isEmpty()) {
+            return false;
+        } else {
+            super.alterar(apolice);
+            return true;
+        }
+    }
+
+    public boolean excluirApolice(String numero) {
+        if (findByNumero(numero).isEmpty()) {
+            return false;
+        } else {
+            super.excluir(numero);
             return true;
         }
     }
@@ -55,31 +51,16 @@ public class ApoliceDAO {
         return Optional.empty();
     }
 
-    public void update(String placa, Apolice novaApolice) {
-    }
+    public List<Apolice> buscarTodasAsApolices() {
+        Registro[] registros = super.buscarTodos();
 
-    public boolean alterar(Apolice segurado) {
-        if (findByNumero(segurado.getNumero()).isEmpty()) {
-            return false;
-        } else {
-            cadastro.alterar(segurado, segurado.getNumero());
-            apolices.removeIf(a -> a.getNumero().equalsIgnoreCase(segurado.getNumero()));
-            apolices.add(segurado);
-            return true;
+        if (registros == null) {
+            return new ArrayList<>();
         }
-    }
 
-    public void remove(String placa) {
-
-    }
-
-    public boolean excluir(String numero) {
-        if (findByNumero(numero).isEmpty()) {
-            return false;
-        } else {
-            cadastro.excluir(numero);
-            apolices.removeIf(a -> a.getNumero().equalsIgnoreCase(numero)); 
-            return true;
-        }
+        return Arrays.stream(registros)
+                     .filter(r -> r instanceof Apolice)
+                     .map(r -> (Apolice) r)
+                     .collect(Collectors.toList());
     }
 }

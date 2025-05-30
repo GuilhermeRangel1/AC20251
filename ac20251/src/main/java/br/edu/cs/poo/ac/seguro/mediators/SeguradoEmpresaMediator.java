@@ -2,7 +2,6 @@ package br.edu.cs.poo.ac.seguro.mediators;
 
 import br.edu.cs.poo.ac.seguro.daos.SeguradoEmpresaDAO;
 import br.edu.cs.poo.ac.seguro.entidades.SeguradoEmpresa;
-import br.edu.cs.poo.ac.seguro.entidades.SeguradoPessoa;
 
 public class SeguradoEmpresaMediator {
 	private SeguradoEmpresaDAO seguradoEmpresaDAO = new SeguradoEmpresaDAO();
@@ -23,7 +22,7 @@ public class SeguradoEmpresaMediator {
 			return "CNPJ deve ter 14 caracteres";
 		}
 		if (!ValidadorCpfCnpj.ehCnpjValido(cnpj)) {
-			return "CNPJ com dígito inválido";
+			return "CNPJ com d�gito inv�lido";
 		}
 		return null;
 	}
@@ -41,7 +40,7 @@ public class SeguradoEmpresaMediator {
 			return msg;
 		}
 		if (seguradoEmpresaDAO.buscar(seg.getCnpj()) != null) {
-			return "CNPJ do segurado empresa já existente";
+			return "CNPJ do segurado empresa j� existente";
 		}
 		seguradoEmpresaDAO.incluir(seg);
 		return null;
@@ -54,7 +53,7 @@ public class SeguradoEmpresaMediator {
 	        return msg; 
 	    }
 	    if (seguradoEmpresaDAO.buscar(seg.getCnpj()) == null) {
-	        return "CNPJ do segurado empresa não existente";
+	        return "CNPJ do segurado empresa n�o existente";
 	    }
 	    seguradoEmpresaDAO.alterar(seg);
 	    return null;
@@ -63,7 +62,7 @@ public class SeguradoEmpresaMediator {
 
 	public String excluirSeguradoEmpresa(String cnpj) {
 		if (seguradoEmpresaDAO.buscar(cnpj) == null) {
-			return "CNPJ do segurado empresa não existente";
+			return "CNPJ do segurado empresa n�o existente";
 		}
 		seguradoEmpresaDAO.excluir(cnpj);
 		return null;
