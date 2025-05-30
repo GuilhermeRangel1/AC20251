@@ -18,14 +18,14 @@ public class SeguradoMediator {
             return "Nome deve ser informado";
         }
         if (nome.length() > 100) {
-            return "Tamanho do nome deve ser no máximo 100 caracteres";
+            return "Tamanho do nome deve ser no m�ximo 100 caracteres";
         }
         return null;
     }
 
     public String validarEndereco(Endereco endereco) {
         if (endereco == null) {
-            return "Endereço deve ser informado";
+            return "Endere�o deve ser informado";
         }
 
         String validacaoLogradouro = validarCampoObrigatorio(endereco.getLogradouro(), "Logradouro");
@@ -36,20 +36,20 @@ public class SeguradoMediator {
 
         String validacaoCidade = validarCampoObrigatorio(endereco.getCidade(), "Cidade");
         if (validacaoCidade != null) return "Cidade deve ser informada";
-        if(endereco.getCidade().length()>100 == true) return "Tamanho da cidade deve ser no máximo 100 caracteres";
+        if(endereco.getCidade().length()>100 == true) return "Tamanho da cidade deve ser no m�ximo 100 caracteres";
 
         String validacaoEstado = validarSiglaEstado(endereco.getEstado());
         if (validacaoEstado != null) return validacaoEstado;
 
         String validacaoPais = validarCampoObrigatorio(endereco.getPais(), "País");
-        if (validacaoPais != null) return validacaoPais;
-        if(endereco.getPais().length()>40 == true) return "Tamanho do país deve ser no máximo 40 caracteres";
+        if (validacaoPais != null) return "Pa�s deve ser informado";
+        if(endereco.getPais().length()>40 == true) return "Tamanho do pa�s deve ser no m�ximo 40 caracteres";
 
         if (endereco.getNumero() != null && endereco.getNumero().length() > 20) {
-            return "Tamanho do número deve ser no máximo 20 caracteres";
+            return "Tamanho do n�mero deve ser no m�ximo 20 caracteres";
         }
         if (endereco.getComplemento() != null && endereco.getComplemento().length() > 30) {
-            return "Tamanho do complemento deve ser no máximo 30 caracteres";
+            return "Tamanho do complemento deve ser no m�ximo 30 caracteres";
         }
         return null;
     }
@@ -87,10 +87,10 @@ public class SeguradoMediator {
 
     public String validarDataCriacao(LocalDate dataCriacao) {
         if (dataCriacao == null) {
-            return "Data da criação deve ser informada";
+            return "Data da cria��o deve ser informada";
         }
         if (dataCriacao.isAfter(LocalDate.now())) {
-            return "Data da criação deve ser menor ou igual à data atual";
+            return "Data da cria��o deve ser menor ou igual � data atual";
         }
         return null;
     }
