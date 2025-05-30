@@ -5,6 +5,11 @@ import br.edu.cs.poo.ac.seguro.entidades.Segurado;
 
 public class SeguradoEmpresaDAO extends SeguradoDAO {
 
+    @Override
+    public Class<?> getClasseEntidade() {
+        return SeguradoEmpresa.class; 
+    }
+
     public SeguradoEmpresa buscar(String cnpj) {
         Segurado seguradoGenerico = super.buscar(cnpj);
         if (seguradoGenerico instanceof SeguradoEmpresa) {
@@ -12,5 +17,4 @@ public class SeguradoEmpresaDAO extends SeguradoDAO {
         }
         return null;
     }
-
 }
