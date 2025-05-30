@@ -12,15 +12,29 @@ public class Veiculo implements Serializable, Registro {
     private int ano;
     private Segurado proprietario; 
     private CategoriaVeiculo categoria;
-    
+
+    public Veiculo(String placa, int ano, SeguradoEmpresa proprietarioEmpresa, SeguradoPessoa proprietarioPessoa, CategoriaVeiculo categoria) {
+        this.placa = placa;
+        this.ano = ano;
+        this.categoria = categoria;
+        if (proprietarioPessoa != null) {
+            this.proprietario = proprietarioPessoa;
+        } else if (proprietarioEmpresa != null) {
+            this.proprietario = proprietarioEmpresa;
+        } else {
+            throw new IllegalArgumentException("Um veículo deve ter um proprietário (pessoa ou empresa).");
+        }
+    }
+
     public Veiculo(String placa, int ano, Segurado proprietario, CategoriaVeiculo categoria) {
         this.placa = placa;
         this.ano = ano;
         this.proprietario = proprietario;
         this.categoria = categoria;
     }
+
     @Override
-    public String getIdUnico() { 
+    public String getIdUnico() {
         return this.placa;
     }
 }
