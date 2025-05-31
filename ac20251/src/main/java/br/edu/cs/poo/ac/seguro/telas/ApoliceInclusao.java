@@ -3,9 +3,6 @@ package br.edu.cs.poo.ac.seguro.telas;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -16,7 +13,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -49,7 +45,7 @@ public class ApoliceInclusao extends JFrame {
 	private JButton btnIncluir;
 	private JButton btnLimpar;
 	private ApoliceMediator apoliceMediator;
-    private NumberFormat decimalFormat = NumberFormat.getNumberInstance();
+    private NumberFormat decimalFormat = NumberFormat.getNumberInstance(); 
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -106,7 +102,10 @@ public class ApoliceInclusao extends JFrame {
 		contentPane.add(lblAno);
 		try {
 		    MaskFormatter anoMask = new MaskFormatter("####");
-		    txtAno = new JFormattedTextField(anoMask);
+            anoMask.setPlaceholderCharacter('_'); 
+            anoMask.setAllowsInvalid(false); 
+            anoMask.setOverwriteMode(true); 
+            txtAno = new JFormattedTextField(anoMask);
 		} catch (ParseException e) {
 		    txtAno = new JFormattedTextField();
 		    System.err.println("Erro ao criar máscara de Ano: " + e.getMessage());
@@ -121,14 +120,13 @@ public class ApoliceInclusao extends JFrame {
 		contentPane.add(lblValorMaximoSegurado);
 		NumberFormatter valorMaxSeguradoFormatter = new NumberFormatter(decimalFormat);
 		valorMaxSeguradoFormatter.setValueClass(BigDecimal.class);
-		valorMaxSeguradoFormatter.setAllowsInvalid(true);
+		valorMaxSeguradoFormatter.setAllowsInvalid(true); 
 		valorMaxSeguradoFormatter.setOverwriteMode(true);
 		txtValorMaximoSegurado = new JFormattedTextField(valorMaxSeguradoFormatter);
 		txtValorMaximoSegurado.setBounds(fieldX, 10 + 4 * verticalSpacing, fieldWidth, fieldHeight);
 		contentPane.add(txtValorMaximoSegurado);
 		txtValorMaximoSegurado.setColumns(10);
         txtValorMaximoSegurado.setValue(BigDecimal.ZERO);
-
 
 		JLabel lblCategoriaVeiculo = new JLabel("Categoria do Veículo:");
 		lblCategoriaVeiculo.setBounds(labelX, 10 + 5 * verticalSpacing, 150, fieldHeight);
@@ -226,75 +224,87 @@ public class ApoliceInclusao extends JFrame {
 	}
 
 	private void incluirApolice() {
-	    String cpfOuCnpjStr = txtCpfCnpj.getText().trim();
-	    String placaStr = txtPlaca.getText().trim();
-	    String anoStr = txtAno.getText().trim(); 
-	    Object valorMaximoSeguradoValue = txtValorMaximoSegurado.getValue();
-	    
-	    String nomeCategoriaSelecionada = (String) cmbCategoriaVeiculo.getSelectedItem();
-	    int codigoCategoria = -1; 
+        String cpfOuCnpjStr = txtCpfCnpj.getText().trim();
+        String placaStr = txtPlaca.getText().trim();
+        
+        Integer ano = null;
+        try {
 
-	    for (CategoriaVeiculo categoria : CategoriaVeiculo.values()) {
-	        if (categoria.getNome().equals(nomeCategoriaSelecionada)) {
-	            codigoCategoria = categoria.getCodigo();
-	            break;
-	        }
-	    }
+            Long anoLong = (Long) txtAno.getValue();
+            if (anoLong != null) {
+                ano = anoLong.intValue();
+            } else {
+                String anoText = txtAno.getText().trim().replace("_", ""); 
+                if (!anoText.isEmpty()) {
+                    ano = Integer.parseInt(anoText);
+                }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Formato do Ano inválido. Use 4 dígitos numéricos.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-	    int ano = 0;
-	    BigDecimal valorMaximoSegurado = BigDecimal.ZERO;
+        BigDecimal valorMaximoSegurado = null;
+        try {
+            valorMaximoSegurado = (BigDecimal) txtValorMaximoSegurado.getValue();
+            if (valorMaximoSegurado == null) {
+                String valorText = txtValorMaximoSegurado.getText().trim();
+                if (!valorText.isEmpty()) {
+                    valorMaximoSegurado = new BigDecimal(decimalFormat.parse(valorText).toString());
+                }
+            }
+            
+        } catch (ParseException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Formato de Valor Máximo Segurado inválido. Digite um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-	    if (cpfOuCnpjStr.isEmpty() || placaStr.isEmpty() || anoStr.isEmpty() || valorMaximoSeguradoValue == null) {
-	        JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+        String nomeCategoriaSelecionada = (String) cmbCategoriaVeiculo.getSelectedItem();
+        int codigoCategoria = -1; 
 
-	    if (codigoCategoria == -1) {
-	        JOptionPane.showMessageDialog(this, "Selecione uma categoria de veículo válida.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+        for (CategoriaVeiculo categoria : CategoriaVeiculo.values()) {
+            if (categoria.getNome().equals(nomeCategoriaSelecionada)) {
+                codigoCategoria = categoria.getCodigo();
+                break;
+            }
+        }
 
-	    try {
-	        ano = Integer.parseInt(anoStr);
-	    } catch (NumberFormatException e) {
-	        JOptionPane.showMessageDialog(this, "Formato do Ano inválido. Use 4 dígitos numéricos.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+        if (cpfOuCnpjStr.isEmpty() || placaStr.isEmpty() || ano == null || valorMaximoSegurado == null) {
+            JOptionPane.showMessageDialog(this, "Todos os campos (CPF ou CNPJ, Placa, Ano do Veículo, Valor Máximo Segurado) são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-	    try {
-	        if (valorMaximoSeguradoValue instanceof BigDecimal) {
-	            valorMaximoSegurado = (BigDecimal) valorMaximoSeguradoValue;
-	        } else if (valorMaximoSeguradoValue instanceof Number) {
-	            valorMaximoSegurado = BigDecimal.valueOf(((Number) valorMaximoSeguradoValue).doubleValue());
-	        } else {
-	            String valorText = txtValorMaximoSegurado.getText().trim();
-	            if (valorText.isEmpty()) {
-	                JOptionPane.showMessageDialog(this, "Valor máximo segurado não pode ser vazio.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-	                return;
-	            }
-	            valorMaximoSegurado = new BigDecimal(valorText.replace(",", "."));
-	        }
-	        
-	        if (valorMaximoSegurado.compareTo(BigDecimal.ZERO) <= 0) {
-	            JOptionPane.showMessageDialog(this, "Valor máximo segurado deve ser maior que zero.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-	            return;
-	        }
+        if (codigoCategoria == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione uma categoria de veículo válida.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-	    } catch (NumberFormatException e) {
-	        JOptionPane.showMessageDialog(this, "Formato de Valor Máximo Segurado inválido. Digite um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+        if (ano <= 0) { 
+            JOptionPane.showMessageDialog(this, "Ano do veículo inválido. Deve ser um número positivo.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (String.valueOf(ano).length() != 4) {
+             JOptionPane.showMessageDialog(this, "Ano do veículo deve ter 4 dígitos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+             return;
+        }
 
 
-	    DadosVeiculo dados = new DadosVeiculo(cpfOuCnpjStr, placaStr, ano, valorMaximoSegurado, codigoCategoria);
+        if (valorMaximoSegurado.compareTo(BigDecimal.ZERO) <= 0) {
+            JOptionPane.showMessageDialog(this, "Valor máximo segurado deve ser maior que zero.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-	    RetornoInclusaoApolice retorno = apoliceMediator.incluirApolice(dados);
 
-	    if (retorno.isSucesso()) {
-	        JOptionPane.showMessageDialog(this, "Apólice incluída com sucesso! Anote o número da apólice: " + retorno.getNumeroApolice(), "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-	        limparCampos();
-	    } else {
-	        JOptionPane.showMessageDialog(this, retorno.getMensagemErro(), "Erro de Inclusão", JOptionPane.ERROR_MESSAGE);
-	    }
+        DadosVeiculo dados = new DadosVeiculo(cpfOuCnpjStr, placaStr, ano, valorMaximoSegurado, codigoCategoria);
+
+        RetornoInclusaoApolice retorno = apoliceMediator.incluirApolice(dados);
+
+        if (retorno.isSucesso()) {
+            JOptionPane.showMessageDialog(this, "Apólice incluída com sucesso! Anote o número da apólice: " + retorno.getNumeroApolice(), "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            limparCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, retorno.getMensagemErro(), "Erro de Inclusão", JOptionPane.ERROR_MESSAGE);
+        }
 	}
 }
