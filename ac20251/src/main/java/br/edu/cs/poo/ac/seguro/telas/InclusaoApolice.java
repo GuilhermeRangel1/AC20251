@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class TelaInclusaoApolice extends JFrame {
+public class InclusaoApolice extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -18,7 +18,7 @@ public class TelaInclusaoApolice extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TelaInclusaoApolice frame = new TelaInclusaoApolice();
+					InclusaoApolice frame = new InclusaoApolice();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -30,7 +30,7 @@ public class TelaInclusaoApolice extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public TelaInclusaoApolice() {
+	public InclusaoApolice() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
