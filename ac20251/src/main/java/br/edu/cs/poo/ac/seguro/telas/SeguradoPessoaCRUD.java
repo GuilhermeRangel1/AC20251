@@ -134,7 +134,7 @@ public class SeguradoPessoaCRUD extends JFrame {
 		contentPane.add(lblRenda);
 		NumberFormatter rendaFormatter = new NumberFormatter(decimalFormat);
 		rendaFormatter.setValueClass(Double.class); 
-		rendaFormatter.setAllowsInvalid(false); 
+		rendaFormatter.setAllowsInvalid(true); 
 		rendaFormatter.setOverwriteMode(true);
 		txtRenda = new JFormattedTextField(rendaFormatter);
 		txtRenda.setBounds(fieldX, 10 + 4 * verticalSpacing, fieldWidth, fieldHeight);
@@ -146,7 +146,7 @@ public class SeguradoPessoaCRUD extends JFrame {
 		contentPane.add(lblBonus);
 		NumberFormatter bonusFormatter = new NumberFormatter(decimalFormat);
 		bonusFormatter.setValueClass(BigDecimal.class);
-		bonusFormatter.setAllowsInvalid(false);
+		bonusFormatter.setAllowsInvalid(true);
 		bonusFormatter.setOverwriteMode(true);
 		txtBonus = new JFormattedTextField(bonusFormatter);
 		txtBonus.setBounds(fieldX, 10 + 5 * verticalSpacing, fieldWidth, fieldHeight);

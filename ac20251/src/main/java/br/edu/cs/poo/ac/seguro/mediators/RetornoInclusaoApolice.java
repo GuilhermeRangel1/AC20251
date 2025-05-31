@@ -19,4 +19,7 @@ public class RetornoInclusaoApolice {
 		this.mensagemErro = mensagemErro;
 
 	}
+    public boolean isSucesso() {
+        return this.numeroApolice != null; 
+    }
 }

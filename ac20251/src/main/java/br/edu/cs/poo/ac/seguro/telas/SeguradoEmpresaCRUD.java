@@ -137,7 +137,7 @@ public class SeguradoEmpresaCRUD extends JFrame {
 		contentPane.add(lblFaturamento);
 		NumberFormatter faturamentoFormatter = new NumberFormatter(decimalFormat);
 		faturamentoFormatter.setValueClass(Double.class);
-		faturamentoFormatter.setAllowsInvalid(false);
+		faturamentoFormatter.setAllowsInvalid(true);
 		faturamentoFormatter.setOverwriteMode(true);
 		txtFaturamento = new JFormattedTextField(faturamentoFormatter);
 		txtFaturamento.setBounds(fieldX, 10 + 4 * verticalSpacing, fieldWidth, fieldHeight);
@@ -149,7 +149,7 @@ public class SeguradoEmpresaCRUD extends JFrame {
 		contentPane.add(lblBonus);
 		NumberFormatter bonusFormatter = new NumberFormatter(decimalFormat);
 		bonusFormatter.setValueClass(BigDecimal.class);
-		bonusFormatter.setAllowsInvalid(false);
+		bonusFormatter.setAllowsInvalid(true);
 		bonusFormatter.setOverwriteMode(true);
 		txtBonus = new JFormattedTextField(bonusFormatter);
 		txtBonus.setBounds(fieldX, 10 + 5 * verticalSpacing, fieldWidth, fieldHeight);

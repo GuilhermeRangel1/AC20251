@@ -125,7 +125,7 @@ public class SinistroInclusao extends JFrame {
 		contentPane.add(lblValorSinistro);
 		NumberFormatter valorSinistroFormatter = new NumberFormatter(decimalFormat);
 		valorSinistroFormatter.setValueClass(Double.class);
-		valorSinistroFormatter.setAllowsInvalid(false);
+		valorSinistroFormatter.setAllowsInvalid(true);
 		valorSinistroFormatter.setOverwriteMode(true);
 		txtValorSinistro = new JFormattedTextField(valorSinistroFormatter);
 		txtValorSinistro.setBounds(fieldX, 10 + 4 * verticalSpacing, fieldWidth, fieldHeight);
