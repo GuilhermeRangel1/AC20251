@@ -33,8 +33,8 @@ import br.edu.cs.poo.ac.seguro.excecoes.ExcecaoValidacaoDados;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
-import java.awt.Font; 
-import java.awt.Color; 
+import java.awt.Font;
+import java.awt.Color;
 
 
 public class SinistroInclusao extends JFrame {
@@ -74,7 +74,7 @@ public class SinistroInclusao extends JFrame {
 		sinistroMediator = SinistroMediator.getInstancia();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 480); 
+		setBounds(100, 100, 600, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -103,7 +103,10 @@ public class SinistroInclusao extends JFrame {
 		contentPane.add(lblDataHoraSinistro);
 		try {
 		    MaskFormatter dateTimeMask = new MaskFormatter("##/##/#### ##:##:##");
-		    txtDataHoraSinistro = new JFormattedTextField(dateTimeMask);
+            dateTimeMask.setPlaceholderCharacter('_'); 
+            dateTimeMask.setAllowsInvalid(false); 
+            dateTimeMask.setOverwriteMode(true);
+            txtDataHoraSinistro = new JFormattedTextField(dateTimeMask);
 		} catch (ParseException e) {
 		    txtDataHoraSinistro = new JFormattedTextField();
 		    System.err.println("Erro ao criar máscara de Data/Hora: " + e.getMessage());
@@ -125,12 +128,13 @@ public class SinistroInclusao extends JFrame {
 		contentPane.add(lblValorSinistro);
 		NumberFormatter valorSinistroFormatter = new NumberFormatter(decimalFormat);
 		valorSinistroFormatter.setValueClass(Double.class);
-		valorSinistroFormatter.setAllowsInvalid(true);
+		valorSinistroFormatter.setAllowsInvalid(true); 
 		valorSinistroFormatter.setOverwriteMode(true);
 		txtValorSinistro = new JFormattedTextField(valorSinistroFormatter);
 		txtValorSinistro.setBounds(fieldX, 10 + 4 * verticalSpacing, fieldWidth, fieldHeight);
 		contentPane.add(txtValorSinistro);
 		txtValorSinistro.setColumns(10);
+        txtValorSinistro.setValue(0.0); 
 
 		JLabel lblTipoSinistro = new JLabel("Tipo de Sinistro:");
 		lblTipoSinistro.setBounds(labelX, 10 + 5 * verticalSpacing, 120, fieldHeight);
@@ -234,71 +238,73 @@ public class SinistroInclusao extends JFrame {
 	}
 
 	private void incluirSinistro() {
-	    String placaStr = txtPlaca.getText().trim();
-	    String dataHoraSinistroStr = txtDataHoraSinistro.getText();
-	    dataHoraSinistroStr = dataHoraSinistroStr.replace("/", "").replace(":", "").replace(" ", "").trim();
+        String placaStr = txtPlaca.getText().trim();
+        String dataHoraSinistroStr = txtDataHoraSinistro.getText().trim(); 
 
-	    String usuarioRegistroStr = txtUsuarioRegistro.getText().trim();
-	    Object valorSinistroValue = txtValorSinistro.getValue();
-	    
-	    String nomeTipoSinistroSelecionado = (String) cmbTipoSinistro.getSelectedItem();
-	    int codigoTipoSinistro = -1; 
+        String usuarioRegistroStr = txtUsuarioRegistro.getText().trim();
+        Object valorSinistroValue = txtValorSinistro.getValue();
+        
+        String nomeTipoSinistroSelecionado = (String) cmbTipoSinistro.getSelectedItem();
+        int codigoTipoSinistro = -1; 
 
-	    for (TipoSinistro tipo : TipoSinistro.values()) {
-	        if (tipo.getNome().equals(nomeTipoSinistroSelecionado)) {
-	            codigoTipoSinistro = tipo.getCodigo();
-	            break;
-	        }
-	    }
+        for (TipoSinistro tipo : TipoSinistro.values()) {
+            if (tipo.getNome().equals(nomeTipoSinistroSelecionado)) {
+                codigoTipoSinistro = tipo.getCodigo();
+                break;
+            }
+        }
 
-	    LocalDateTime dataHoraSinistro = null;
-	    double valorSinistro = 0.0;
+        LocalDateTime dataHoraSinistro = null;
+        Double valorSinistro = null; 
 
-	    if (placaStr.isEmpty() || dataHoraSinistroStr.isEmpty() || usuarioRegistroStr.isEmpty() || valorSinistroValue == null) {
-	        JOptionPane.showMessageDialog(this, "Todos os campos (Placa, Data/Hora Sinistro, Usuário Registro, Valor Sinistro) são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
-	    
-	    if (codigoTipoSinistro == -1) {
-	        JOptionPane.showMessageDialog(this, "Selecione um tipo de sinistro válido.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+        if (placaStr.isEmpty() || dataHoraSinistroStr.isEmpty() || usuarioRegistroStr.isEmpty() || valorSinistroValue == null) {
+            JOptionPane.showMessageDialog(this, "Todos os campos (Placa, Data/Hora Sinistro, Usuário Registro, Valor Sinistro) são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (codigoTipoSinistro == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um tipo de sinistro válido.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
+        try {
+            dataHoraSinistro = LocalDateTime.parse(dataHoraSinistroStr, DATETIME_FORMATTER);
+            if (dataHoraSinistro.isAfter(LocalDateTime.now())) {
+                JOptionPane.showMessageDialog(this, "Data/Hora do Sinistro não pode ser futura.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, "Formato de Data/Hora do Sinistro inválido. Use dd/MM/yyyy HH:mm:ss.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-	    try {
-	        dataHoraSinistro = LocalDateTime.parse(dataHoraSinistroStr, DATETIME_FORMATTER);
-	    } catch (DateTimeParseException e) {
-	        JOptionPane.showMessageDialog(this, "Formato de Data/Hora do Sinistro inválido. Consulte a observação.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+        try {
+            if (valorSinistroValue instanceof Number) {
+                valorSinistro = ((Number) valorSinistroValue).doubleValue();
+            } else {
+                valorSinistro = decimalFormat.parse(txtValorSinistro.getText().trim()).doubleValue();
+            }
+            if (valorSinistro < 0) {
+                JOptionPane.showMessageDialog(this, "Valor do sinistro não pode ser negativo.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (ParseException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Formato de Valor do Sinistro inválido. Digite um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-	    try {
-	        if (valorSinistroValue instanceof Number) {
-	            valorSinistro = ((Number) valorSinistroValue).doubleValue();
-	        } else {
-	            valorSinistro = Double.parseDouble(txtValorSinistro.getText().trim().replace(",", "."));
-	        }
-	        if (valorSinistro < 0) { 
-	            JOptionPane.showMessageDialog(this, "Valor do sinistro não pode ser negativo.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-	            return;
-	        }
-	    } catch (NumberFormatException e) {
-	        JOptionPane.showMessageDialog(this, "Formato de Valor do Sinistro inválido. Digite um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+        DadosSinistro dados = new DadosSinistro(placaStr, dataHoraSinistro, usuarioRegistroStr, valorSinistro, codigoTipoSinistro);
 
-	    DadosSinistro dados = new DadosSinistro(placaStr, dataHoraSinistro, usuarioRegistroStr, valorSinistro, codigoTipoSinistro);
-
-	    try {
-	        String numeroSinistroGerado = sinistroMediator.incluirSinistro(dados, LocalDateTime.now());
-	        JOptionPane.showMessageDialog(this, "Sinistro incluído com sucesso! Anote o número do sinistro: " + numeroSinistroGerado, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-	        limparCampos();
-	    } catch (ExcecaoValidacaoDados e) {
-	        String mensagens = e.getMensagens().stream().collect(Collectors.joining("\n"));
-	        JOptionPane.showMessageDialog(this, mensagens, "Erro de Inclusão", JOptionPane.ERROR_MESSAGE);
-	    } catch (Exception e) {
-	        JOptionPane.showMessageDialog(this, "Ocorreu um erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-	        e.printStackTrace();
-	    }
+        try {
+            String numeroSinistroGerado = sinistroMediator.incluirSinistro(dados, LocalDateTime.now());
+            JOptionPane.showMessageDialog(this, "Sinistro incluído com sucesso! Anote o número do sinistro: " + numeroSinistroGerado, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            limparCampos();
+        } catch (ExcecaoValidacaoDados e) {
+            String mensagens = e.getMensagens().stream().collect(Collectors.joining("\n"));
+            JOptionPane.showMessageDialog(this, mensagens, "Erro de Inclusão", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocorreu um erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
 	}
 }

@@ -58,7 +58,7 @@ public class SeguradoPessoaCRUD extends JFrame {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private NumberFormat decimalFormat = NumberFormat.getNumberInstance();
+    private NumberFormat decimalFormat = NumberFormat.getNumberInstance(); 
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -105,8 +105,11 @@ public class SeguradoPessoaCRUD extends JFrame {
 		lblCpf.setBounds(labelX, 10 + 2 * verticalSpacing, 80, fieldHeight);
 		contentPane.add(lblCpf);
 		try {
-		    MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
-		    txtCpf = new JFormattedTextField(cpfMask);
+            MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
+            cpfMask.setPlaceholderCharacter('_'); 
+            cpfMask.setAllowsInvalid(false); 
+            cpfMask.setOverwriteMode(true);
+            txtCpf = new JFormattedTextField(cpfMask);
 		} catch (ParseException e) {
 		    txtCpf = new JFormattedTextField(); 
 		    System.err.println("Erro ao criar máscara de CPF: " + e.getMessage());
@@ -119,8 +122,11 @@ public class SeguradoPessoaCRUD extends JFrame {
 		lblDataNascimento.setBounds(labelX, 10 + 3 * verticalSpacing, 150, fieldHeight); 
 		contentPane.add(lblDataNascimento);
 		try {
-		    MaskFormatter dateMask = new MaskFormatter("##/##/####");
-		    txtDataNascimento = new JFormattedTextField(dateMask);
+            MaskFormatter dateMask = new MaskFormatter("##/##/####");
+            dateMask.setPlaceholderCharacter('_'); 
+            dateMask.setAllowsInvalid(false); 
+            dateMask.setOverwriteMode(true); 
+            txtDataNascimento = new JFormattedTextField(dateMask);
 		} catch (ParseException e) {
 		    txtDataNascimento = new JFormattedTextField(); // Fallback
 		    System.err.println("Erro ao criar máscara de Data Nasc.: " + e.getMessage());
@@ -140,18 +146,20 @@ public class SeguradoPessoaCRUD extends JFrame {
 		txtRenda.setBounds(fieldX, 10 + 4 * verticalSpacing, fieldWidth, fieldHeight);
 		contentPane.add(txtRenda);
 		txtRenda.setColumns(10);
+        txtRenda.setValue(0.0); 
 
 		JLabel lblBonus = new JLabel("Bônus (R$):");
 		lblBonus.setBounds(labelX, 10 + 5 * verticalSpacing, 80, fieldHeight);
 		contentPane.add(lblBonus);
 		NumberFormatter bonusFormatter = new NumberFormatter(decimalFormat);
-		bonusFormatter.setValueClass(BigDecimal.class);
+		bonusFormatter.setValueClass(BigDecimal.class); 
 		bonusFormatter.setAllowsInvalid(true);
 		bonusFormatter.setOverwriteMode(true);
 		txtBonus = new JFormattedTextField(bonusFormatter);
 		txtBonus.setBounds(fieldX, 10 + 5 * verticalSpacing, fieldWidth, fieldHeight);
 		contentPane.add(txtBonus);
 		txtBonus.setColumns(10);
+        txtBonus.setValue(BigDecimal.ZERO);
 
 
 		int enderecoStartY = 10 + 6 * verticalSpacing + 20; 
@@ -171,8 +179,11 @@ public class SeguradoPessoaCRUD extends JFrame {
 		lblCep.setBounds(labelX, enderecoStartY + 2 * verticalSpacing, 80, fieldHeight);
 		contentPane.add(lblCep);
 		try {
-		    MaskFormatter cepMask = new MaskFormatter("#####-###");
-		    txtCep = new JFormattedTextField(cepMask);
+            MaskFormatter cepMask = new MaskFormatter("#####-###");
+            cepMask.setPlaceholderCharacter('_'); 
+            cepMask.setAllowsInvalid(false); 
+            cepMask.setOverwriteMode(true); 
+            txtCep = new JFormattedTextField(cepMask);
 		} catch (ParseException e) {
 		    txtCep = new JFormattedTextField();
 		    System.err.println("Erro ao criar máscara de CEP: " + e.getMessage());
@@ -452,11 +463,11 @@ public class SeguradoPessoaCRUD extends JFrame {
 	private void estadoInicialTela() {
 		limparCampos();
 		habilitarCamposEdicao(false); 
-		txtCpf.setEnabled(true);      
+		txtCpf.setEnabled(true); 
 		btnIncluir.setEnabled(false); 
 		btnAlterar.setEnabled(false);
 		btnExcluir.setEnabled(false);
-		btnBuscar.setEnabled(true);   
+		btnBuscar.setEnabled(true); 
 		btnLimpar.setEnabled(true); 
 		txtCpf.requestFocusInWindow(); 
 	}
@@ -496,7 +507,8 @@ public class SeguradoPessoaCRUD extends JFrame {
 	private SeguradoPessoa obterDadosDaTela() {
 	    String nomeStr = txtNome.getText().trim();
 	    String cpfStr = txtCpf.getText().replace(".", "").replace("-", "").trim();
-	    String dataNascimentoStr = txtDataNascimento.getText().replace("/", "").trim();
+	    // A CORREÇÃO ESTÁ AQUI: NÃO REMOVA AS BARRAS DA DATA ANTES DE PARSEAR
+	    String dataNascimentoStr = txtDataNascimento.getText().trim(); 
 	    
 	    Object rendaValue = txtRenda.getValue();
 	    Object bonusValue = txtBonus.getValue();
@@ -533,13 +545,13 @@ public class SeguradoPessoaCRUD extends JFrame {
 	        if (rendaValue instanceof Number) {
 	            renda = ((Number) rendaValue).doubleValue();
 	        } else {
-	            renda = Double.parseDouble(txtRenda.getText().trim().replace(",", ".")); 
+	            renda = decimalFormat.parse(txtRenda.getText().trim()).doubleValue();
 	        }
 	        if (renda < 0) {
 	            JOptionPane.showMessageDialog(this, "Renda não pode ser negativa.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
 	            return null;
 	        }
-	    } catch (NumberFormatException e) {
+	    } catch (ParseException | NumberFormatException e) {
 	        JOptionPane.showMessageDialog(this, "Formato de Renda inválido. Digite um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
 	        return null;
 	    }
@@ -550,14 +562,14 @@ public class SeguradoPessoaCRUD extends JFrame {
 	        } else if (bonusValue instanceof Number) {
 	            bonus = BigDecimal.valueOf(((Number) bonusValue).doubleValue());
 	        } else {
-	            bonus = new BigDecimal(txtBonus.getText().trim().replace(",", "."));
+	            bonus = new BigDecimal(decimalFormat.parse(txtBonus.getText().trim()).doubleValue());
 	        }
 
 	        if (bonus.compareTo(BigDecimal.ZERO) < 0) {
 	             JOptionPane.showMessageDialog(this, "Bônus não pode ser negativo.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
 	             return null;
 	        }
-	    } catch (NumberFormatException e) {
+	    } catch (ParseException | NumberFormatException e) {
 	        JOptionPane.showMessageDialog(this, "Formato de Bônus inválido. Digite um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
 	        return null;
 	    }
