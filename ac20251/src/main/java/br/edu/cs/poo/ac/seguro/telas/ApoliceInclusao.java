@@ -120,7 +120,7 @@ public class ApoliceInclusao extends JFrame {
 		contentPane.add(lblValorMaximoSegurado);
 		NumberFormatter valorMaxSeguradoFormatter = new NumberFormatter(decimalFormat);
 		valorMaxSeguradoFormatter.setValueClass(BigDecimal.class);
-		valorMaxSeguradoFormatter.setAllowsInvalid(true); 
+		valorMaxSeguradoFormatter.setAllowsInvalid(true);
 		valorMaxSeguradoFormatter.setOverwriteMode(true);
 		txtValorMaximoSegurado = new JFormattedTextField(valorMaxSeguradoFormatter);
 		txtValorMaximoSegurado.setBounds(fieldX, 10 + 4 * verticalSpacing, fieldWidth, fieldHeight);
@@ -229,33 +229,42 @@ public class ApoliceInclusao extends JFrame {
         
         Integer ano = null;
         try {
+            String anoText = txtAno.getText().trim().replace("_", ""); 
 
-            Long anoLong = (Long) txtAno.getValue();
-            if (anoLong != null) {
-                ano = anoLong.intValue();
-            } else {
-                String anoText = txtAno.getText().trim().replace("_", ""); 
-                if (!anoText.isEmpty()) {
-                    ano = Integer.parseInt(anoText);
-                }
+            if (anoText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "O campo 'Ano do Veículo' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+            
+            ano = Integer.parseInt(anoText); 
+
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Formato do Ano inválido. Use 4 dígitos numéricos.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Formato do Ano inválido. Use 4 dígitos numéricos válidos (ex: 2023).", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         BigDecimal valorMaximoSegurado = null;
         try {
-            valorMaximoSegurado = (BigDecimal) txtValorMaximoSegurado.getValue();
-            if (valorMaximoSegurado == null) {
-                String valorText = txtValorMaximoSegurado.getText().trim();
-                if (!valorText.isEmpty()) {
-                    valorMaximoSegurado = new BigDecimal(decimalFormat.parse(valorText).toString());
-                }
+            Object value = txtValorMaximoSegurado.getValue();
+            
+            if (value instanceof BigDecimal) {
+                valorMaximoSegurado = (BigDecimal) value;
+            } else if (value instanceof Number) { 
+                valorMaximoSegurado = BigDecimal.valueOf(((Number) value).doubleValue());
+            } else if (value instanceof String) { 
+                 String valorText = ((String) value).trim();
+                 if (!valorText.isEmpty()) {
+                     valorMaximoSegurado = new BigDecimal(decimalFormat.parse(valorText).doubleValue());
+                 }
             }
             
+            if (valorMaximoSegurado == null || valorMaximoSegurado.compareTo(BigDecimal.ZERO) <= 0) {
+                JOptionPane.showMessageDialog(this, "Valor máximo segurado deve ser maior que zero e numérico.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
         } catch (ParseException | NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Formato de Valor Máximo Segurado inválido. Digite um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Formato de Valor Máximo Segurado inválido. Digite um número válido (ex: 1000.00).", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -269,8 +278,8 @@ public class ApoliceInclusao extends JFrame {
             }
         }
 
-        if (cpfOuCnpjStr.isEmpty() || placaStr.isEmpty() || ano == null || valorMaximoSegurado == null) {
-            JOptionPane.showMessageDialog(this, "Todos os campos (CPF ou CNPJ, Placa, Ano do Veículo, Valor Máximo Segurado) são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+        if (cpfOuCnpjStr.isEmpty() || placaStr.isEmpty() || ano == null) {
+            JOptionPane.showMessageDialog(this, "Os campos 'CPF ou CNPJ', 'Placa' e 'Ano do Veículo' são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -285,16 +294,9 @@ public class ApoliceInclusao extends JFrame {
         }
         
         if (String.valueOf(ano).length() != 4) {
-             JOptionPane.showMessageDialog(this, "Ano do veículo deve ter 4 dígitos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-             return;
-        }
-
-
-        if (valorMaximoSegurado.compareTo(BigDecimal.ZERO) <= 0) {
-            JOptionPane.showMessageDialog(this, "Valor máximo segurado deve ser maior que zero.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Ano do veículo deve ter 4 dígitos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
 
         DadosVeiculo dados = new DadosVeiculo(cpfOuCnpjStr, placaStr, ano, valorMaximoSegurado, codigoCategoria);
 
@@ -302,7 +304,7 @@ public class ApoliceInclusao extends JFrame {
 
         if (retorno.isSucesso()) {
             JOptionPane.showMessageDialog(this, "Apólice incluída com sucesso! Anote o número da apólice: " + retorno.getNumeroApolice(), "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-            limparCampos();
+            limparCampos(); 
         } else {
             JOptionPane.showMessageDialog(this, retorno.getMensagemErro(), "Erro de Inclusão", JOptionPane.ERROR_MESSAGE);
         }
