@@ -122,7 +122,7 @@ public class SeguradoPessoaCRUD extends JFrame {
 		    MaskFormatter dateMask = new MaskFormatter("##/##/####");
 		    txtDataNascimento = new JFormattedTextField(dateMask);
 		} catch (ParseException e) {
-		    txtDataNascimento = new JFormattedTextField(); // Fallback
+		    txtDataNascimento = new JFormattedTextField(); 
 		    System.err.println("Erro ao criar máscara de Data Nasc.: " + e.getMessage());
 		}
 		txtDataNascimento.setBounds(fieldX, 10 + 3 * verticalSpacing, fieldWidth, fieldHeight);
