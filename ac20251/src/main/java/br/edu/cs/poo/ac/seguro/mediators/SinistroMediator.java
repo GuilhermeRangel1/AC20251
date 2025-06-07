@@ -56,11 +56,11 @@ public class SinistroMediator {
             }
 
             if (dados.getPlaca() == null || dados.getPlaca().trim().isEmpty()) {
-                excecoes.adicionarMensagem("Placa do Ve�culo deve ser informada");
+                excecoes.adicionarMensagem("Placa do Veiculo deve ser informada");
             }
 
             if (dados.getUsuarioRegistro() == null || dados.getUsuarioRegistro().trim().isEmpty()) {
-                excecoes.adicionarMensagem("Usu�rio do registro de sinistro deve ser informado");
+                excecoes.adicionarMensagem("Usuario do registro de sinistro deve ser informado");
             }
 
             if (dados.getValorSinistro() <= 0) {
@@ -68,7 +68,7 @@ public class SinistroMediator {
             }
 
             if (TipoSinistro.getTipoSinistro(dados.getCodigoTipoSinistro()) == null) {
-                excecoes.adicionarMensagem("C�digo do tipo de sinistro inv�lido");
+                excecoes.adicionarMensagem("Codigo do tipo de sinistro invalido");
             }
         }
 
@@ -122,11 +122,11 @@ public class SinistroMediator {
         }
 
         if (apoliceVigente == null) {
-            excecoes.adicionarMensagem("N�o existe ap�lice vigente para o ve�culo");
+            excecoes.adicionarMensagem("Nao existe apolice vigente para o veiculo");
         } else {
             BigDecimal valorSinistroBD = BigDecimal.valueOf(dados.getValorSinistro());
             if (valorSinistroBD.compareTo(apoliceVigente.getValorMaximoSegurado()) > 0) {
-                excecoes.adicionarMensagem("Valor do sinistro n�o pode ultrapassar o valor m�ximo segurado constante na ap�lice");
+                excecoes.adicionarMensagem("Valor do sinistro nao pode ultrapassar o valor maximo segurado constante na apolice");
             }
         }
 
